@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { addBike } from "../../../api/bikeApi.ts"; // Adjust the import path as necessary
+import { CreateBikeDTO } from "../../../api/types/types.ts";
 const AdminCreateBike = () => {
   const navigate = useNavigate();
+  const [bikeData, setBikeData] = useState({
+    description: "",
+    photoUrl: "",
+    pricePerHour: 0,
+    bikeModelId: 0,
+    rentingCenterId: 0,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBikeData({ ...bikeData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addBike(bikeData as CreateBikeDTO);
+      navigate("/admin/bikes");
+    } catch (error) {
+      console.error("Failed to create bike:", error);
+    }
+  };
 
   return (
     <div
@@ -16,7 +39,7 @@ const AdminCreateBike = () => {
       }}
     >
       <h1 style={{ textAlign: "center", color: "#333" }}>Create a New Bike</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="description"
@@ -28,6 +51,8 @@ const AdminCreateBike = () => {
             type="text"
             id="description"
             name="description"
+            value={bikeData.description}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -48,6 +73,8 @@ const AdminCreateBike = () => {
             type="url"
             id="photoUrl"
             name="photoUrl"
+            value={bikeData.photoUrl}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -68,6 +95,8 @@ const AdminCreateBike = () => {
             type="number"
             id="pricePerHour"
             name="pricePerHour"
+            value={bikeData.pricePerHour}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -88,6 +117,8 @@ const AdminCreateBike = () => {
             type="number"
             id="bikeModelId"
             name="bikeModelId"
+            value={bikeData.bikeModelId}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -108,6 +139,8 @@ const AdminCreateBike = () => {
             type="number"
             id="rentingCenterId"
             name="rentingCenterId"
+            value={bikeData.rentingCenterId}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width

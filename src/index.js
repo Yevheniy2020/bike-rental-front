@@ -17,8 +17,8 @@ import AdminEditCenter from "./components/admin/edit/AdminEditCenter.tsx";
 import AdminEditModel from "./components/admin/edit/AdminEditModel.tsx";
 import AdminEditOrder from "./components/admin/edit/AdminEditOrder.tsx";
 // -
-import AdminCreateBike from "./components/admin/AdminCreateBrand.tsx";
-import AdminCreateBrand from "./components/admin/AdminCreateBrand.tsx";
+import AdminCreateBike from "./components/admin/create/AdminCreateBike.tsx";
+import AdminCreateBrand from "./components/admin/create/AdminCreateBrand.tsx";
 import AdminCreateCenter from "./components/admin/create/AdminCreateCenter.tsx";
 import AdminCreateModel from "./components/admin/create/AdminCreateModel.tsx";
 import AdminCreateOrder from "./components/admin/create/AdminCreateOrder.tsx";

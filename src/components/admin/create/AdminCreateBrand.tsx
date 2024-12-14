@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addBrand } from "../../api/brandApi.ts";
+import { addBrand } from "../../../api/brandApi.ts";
 
 const AdminCreateBrand = () => {
   const navigate = useNavigate();

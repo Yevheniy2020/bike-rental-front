@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addCenter } from "../../../api/centerApi.ts"; // Adjust the import path as necessary
 
 const AdminCreateCenter = () => {
   const navigate = useNavigate();
+  const [centerData, setCenterData] = useState({
+    description: "",
+    latitude: 0,
+    longitude: 0,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCenterData({ ...centerData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addCenter(centerData);
+      navigate("/admin/centers");
+    } catch (error) {
+      console.error("Failed to create center:", error);
+    }
+  };
 
   return (
     <div
@@ -18,7 +39,7 @@ const AdminCreateCenter = () => {
       <h1 style={{ textAlign: "center", color: "#333" }}>
         Create a New Center
       </h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="description"
@@ -30,6 +51,8 @@ const AdminCreateCenter = () => {
             type="text"
             id="description"
             name="description"
+            value={centerData.description}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -50,6 +73,8 @@ const AdminCreateCenter = () => {
             type="number"
             id="latitude"
             name="latitude"
+            value={centerData.latitude}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -70,6 +95,8 @@ const AdminCreateCenter = () => {
             type="number"
             id="longitude"
             name="longitude"
+            value={centerData.longitude}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
