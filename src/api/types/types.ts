@@ -18,6 +18,7 @@ export interface UserDTO {
 
 // Bike Types
 export interface CreateBikeDTO {
+  id: string; //just for render
   description?: string;
   photoUrl?: string;
   pricePerHour: number;
