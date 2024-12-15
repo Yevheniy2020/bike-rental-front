@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addModel } from "../../../api/modelApi.ts"; // Adjust the import path as necessary
 
 const AdminCreateModel = () => {
   const navigate = useNavigate();
+  const [modelData, setModelData] = useState({
+    name: "",
+    brandId: 0,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setModelData({
+      ...modelData,
+      [name]: name === "brandId" ? parseInt(value) : value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addModel(modelData);
+      navigate("/admin/models");
+    } catch (error) {
+      console.error("Failed to create model:", error);
+    }
+  };
 
   return (
     <div
@@ -16,7 +39,7 @@ const AdminCreateModel = () => {
       }}
     >
       <h1 style={{ textAlign: "center", color: "#333" }}>Create a New Model</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="name"
@@ -28,8 +51,9 @@ const AdminCreateModel = () => {
             type="text"
             id="name"
             name="name"
+            value={modelData.name}
+            onChange={handleChange}
             required
-            defaultValue="" // Using value from context
             style={{
               width: "calc(100% - 20px)", // Adjusted width
               padding: "10px",
@@ -49,8 +73,9 @@ const AdminCreateModel = () => {
             type="number"
             id="brandId"
             name="brandId"
+            value={modelData.brandId}
+            onChange={handleChange}
             required
-            defaultValue="" // Using value from context
             style={{
               width: "calc(100% - 20px)", // Adjusted width
               padding: "10px",

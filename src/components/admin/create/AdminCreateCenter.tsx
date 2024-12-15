@@ -5,7 +5,6 @@ import { addCenter } from "../../../api/centerApi.ts"; // Adjust the import path
 const AdminCreateCenter = () => {
   const navigate = useNavigate();
   const [centerData, setCenterData] = useState({
-    description: "",
     latitude: 0,
     longitude: 0,
   });
@@ -40,28 +39,6 @@ const AdminCreateCenter = () => {
         Create a New Center
       </h1>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
-          <label
-            htmlFor="description"
-            style={{ display: "block", marginBottom: "5px" }}
-          >
-            Description:
-          </label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={centerData.description}
-            onChange={handleChange}
-            required
-            style={{
-              width: "calc(100% - 20px)", // Adjusted width
-              padding: "10px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
-          />
-        </div>
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="latitude"

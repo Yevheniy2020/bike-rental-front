@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllBrands } from "../../api/brandApi.ts"; // Adjust the import path as necessary
+import { getAllBrands, deleteBrand } from "../../api/brandApi.ts"; // Adjust the import path as necessary
 import { CreateBrandDTO } from "../../api/types/types.ts";
+
 const AdminBrands = () => {
   const navigate = useNavigate();
   const [brands, setBrands] = useState<CreateBrandDTO[]>([]);
 
   const handleUpdate = (id) => {
-    console.log("Update brand with ID:", id);
+    navigate(`/admin/update/brand/${id}`);
   };
-  const handleDelete = (id) => {
-    console.log("Delete brand with ID:", id);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this brand?")) {
+      try {
+        await deleteBrand(id); // Call the deleteBrand function from the API
+        setBrands(brands.filter((brand) => brand.id !== id)); // Update the state to remove the deleted brand
+      } catch (error) {
+        console.error("Failed to delete brand:", error);
+      }
+    }
   };
   const handlePostNew = () => {
     navigate("/admin/create/brand");
@@ -46,10 +55,10 @@ const AdminBrands = () => {
           </tr>
         </thead>
         <tbody>
-          {brands.map((brand, index) => (
-            <tr key={index}>
+          {brands.map((brand) => (
+            <tr key={brand.id}>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                {index + 1}
+                {brand.id}
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 {brand.name}
@@ -68,7 +77,7 @@ const AdminBrands = () => {
                     cursor: "pointer",
                     marginRight: "5px",
                   }}
-                  onClick={() => handleDelete(index + 1)}
+                  onClick={() => handleDelete(brand.id)}
                 >
                   Delete
                 </button>
@@ -81,7 +90,7 @@ const AdminBrands = () => {
                     borderRadius: "4px",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleUpdate(index + 1)}
+                  onClick={() => handleUpdate(brand.id)}
                 >
                   Update
                 </button>

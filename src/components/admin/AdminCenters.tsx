@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllCenters } from "../../api/centerApi.ts"; // Adjust the import path as necessary
+import { getAllCenters, deleteCenter } from "../../api/centerApi.ts"; // Adjust the import path as necessary
 import { CreateRentingCenterDTO } from "../../api/types/types.ts";
 
 const AdminCenters = () => {
   const navigate = useNavigate();
   const [centers, setCenters] = useState<CreateRentingCenterDTO[]>([]);
 
-  const handleUpdate = (index) => {
-    console.log("Update center with index:", index);
+  const handleUpdate = (id) => {
+    navigate(`/admin/update/center/${id}`);
   };
-  const handleDelete = (index) => {
-    console.log("Delete center with index:", index);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this center?")) {
+      try {
+        await deleteCenter(id); // Call the deleteCenter function from the API
+        setCenters(centers.filter((center) => center.id !== id)); // Update the state to remove the deleted center
+      } catch (error) {
+        console.error("Failed to delete center:", error);
+      }
+    }
   };
   const handlePostNew = () => {
     navigate("/admin/create/center");
@@ -49,10 +57,10 @@ const AdminCenters = () => {
           </tr>
         </thead>
         <tbody>
-          {centers.map((center, index) => (
-            <tr key={index}>
+          {centers.map((center) => (
+            <tr key={center.id}>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                {index + 1}
+                {center.id}
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 {center.latitude}
@@ -71,7 +79,7 @@ const AdminCenters = () => {
                     cursor: "pointer",
                     marginRight: "5px",
                   }}
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(center.id)}
                 >
                   Delete
                 </button>
@@ -84,7 +92,7 @@ const AdminCenters = () => {
                     borderRadius: "4px",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleUpdate(index)}
+                  onClick={() => handleUpdate(center.id)}
                 >
                   Update
                 </button>

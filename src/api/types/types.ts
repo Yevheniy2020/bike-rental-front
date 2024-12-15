@@ -18,7 +18,7 @@ export interface UserDTO {
 
 // Bike Types
 export interface CreateBikeDTO {
-  id: string; //just for render
+  id?: number;
   description?: string;
   photoUrl?: string;
   pricePerHour: number;
@@ -28,24 +28,28 @@ export interface CreateBikeDTO {
 
 // Bike Model Types
 export interface CreateBikeModelDTO {
+  id?: number;
   name?: string;
   brandId: number;
 }
 
 // Brand Types
 export interface CreateBrandDTO {
+  id?: number;
   name?: string;
   description?: string;
 }
 
 // Renting Center Types
 export interface CreateRentingCenterDTO {
+  id?: number;
   latitude: number;
   longitude: number;
 }
 
 // Order Types
 export interface CreateOrderDTO {
+  id?: number;
   toPay: number;
   userId: number;
   bikeId: number;

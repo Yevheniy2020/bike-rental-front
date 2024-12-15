@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBikes } from "../api/bikeApi.ts";
 import { CreateBikeDTO } from "../api/types/types.ts";
 
 const Bikes = () => {
-  const [bikes, setBikes] = React.useState<CreateBikeDTO[]>([]);
+  const [bikes, setBikes] = useState<CreateBikeDTO[]>([]);
+  const [modelFilter, setModelFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
 
   const fetchBikes = async () => {
     try {
@@ -19,16 +21,92 @@ const Bikes = () => {
   useEffect(() => {
     fetchBikes();
   }, []);
+
   const navigate = useNavigate();
 
   const handleBikeClick = (id) => {
     navigate(`/bike-view/${id}`);
   };
+
+  const filteredBikes = bikes.filter((bike) => {
+    const modelName = bike.bikeModelId
+      ? bike.bikeModel?.name.toLowerCase()
+      : "";
+    const brandName = bike.bikeModelId
+      ? bike.bikeModel?.brand?.name.toLowerCase()
+      : "";
+    return (
+      (modelFilter === "" || modelName.includes(modelFilter.toLowerCase())) &&
+      (brandFilter === "" || brandName.includes(brandFilter.toLowerCase()))
+    );
+  });
+
   return (
     <div>
       <div
-        style={{ display: "flex", justifyContent: "center", margin: "20px 0" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          margin: "20px 0",
+          gap: "20px",
+        }}
+      ></div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          margin: "20px 0",
+          gap: "20px",
+        }}
       >
+        <select
+          value={modelFilter}
+          onChange={(e) => setModelFilter(e.target.value)}
+          style={{
+            padding: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            backgroundColor: "#f9f9f9",
+            fontSize: "16px",
+            color: "#333",
+            cursor: "pointer",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+            width: "200px", // Added optimal width
+          }}
+        >
+          <option value="">Filter by model</option>
+          {[...new Set(bikes.map((bike) => bike.bikeModel?.name))].map(
+            (modelName, index) => (
+              <option key={index} value={modelName}>
+                {modelName}
+              </option>
+            )
+          )}
+        </select>
+        <select
+          value={brandFilter}
+          onChange={(e) => setBrandFilter(e.target.value)}
+          style={{
+            padding: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            backgroundColor: "#f9f9f9",
+            fontSize: "16px",
+            color: "#333",
+            cursor: "pointer",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+            width: "200px", // Added optimal width
+          }}
+        >
+          <option value="">Filter by brand</option>
+          {[...new Set(bikes.map((bike) => bike.bikeModel?.brand?.name))].map(
+            (brandName, index) => (
+              <option key={index} value={brandName}>
+                {brandName}
+              </option>
+            )
+          )}
+        </select>
         <button
           style={{
             padding: "15px 30px",
@@ -52,6 +130,33 @@ const Bikes = () => {
         >
           To Admin
         </button>
+        <button
+          style={{
+            padding: "15px 30px",
+            backgroundColor: "#F44336",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontSize: "16px",
+            transition: "background-color 0.3s, transform 0.2s",
+          }}
+          onClick={() => {
+            // Add your logout logic here
+            localStorage.setItem("user", "null"); // Set user data in local storage
+            window.location.reload(); // Reload the current page
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#D32F2F"; // Darker red on hover
+            e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge on hover
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#F44336"; // Original red
+            e.currentTarget.style.transform = "scale(1)"; // Reset size
+          }}
+        >
+          Log Out
+        </button>
       </div>
       <div
         style={{
@@ -60,7 +165,7 @@ const Bikes = () => {
           gap: "16px",
         }}
       >
-        {bikes.map((bike) => (
+        {filteredBikes.map((bike) => (
           <div
             key={bike.id}
             onClick={() => handleBikeClick(bike.id)}

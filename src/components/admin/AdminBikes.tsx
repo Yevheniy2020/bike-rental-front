@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllBikes } from "../../api/bikeApi.ts"; // Adjust the import path as necessary
+import { getAllBikes, deleteBike } from "../../api/bikeApi.ts"; // Adjust the import path as necessary
 import { CreateBikeDTO } from "../../api/types/types.ts"; // Adjust the import path as necessary
 
 const AdminBikes = () => {
@@ -8,10 +8,18 @@ const AdminBikes = () => {
   const [bikes, setBikes] = useState<CreateBikeDTO[]>([]);
 
   const handleUpdate = (id) => {
-    console.log("lol");
+    navigate(`/admin/update/bike/${id}`);
   };
-  const handleDelete = (id) => {
-    console.log("lol");
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this bike?")) {
+      try {
+        await deleteBike(id); // Call the deleteBike function from the API
+        setBikes(bikes.filter((bike) => bike.id !== id)); // Update the state to remove the deleted bike
+      } catch (error) {
+        console.error("Failed to delete bike:", error);
+      }
+    }
   };
   const handlePostNew = () => {
     navigate("/admin/create/bike");

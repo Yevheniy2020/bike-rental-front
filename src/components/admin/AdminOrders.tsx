@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllOrders } from "../../api/orderApi.ts"; // Adjust the import path as necessary
+import { getAllOrders, deleteOrder } from "../../api/orderApi.ts"; // Adjust the import path as necessary
 import { CreateOrderDTO } from "../../api/types/types.ts"; // Adjust the import path as necessary
 
 const AdminOrders = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<CreateOrderDTO[]>([]);
 
-  const handleUpdate = (index) => {
-    console.log("Update order with index:", index);
+  const handleUpdate = (id) => {
+    navigate(`/admin/update/order/${id}`);
   };
-  const handleDelete = (index) => {
-    console.log("Delete order with index:", index);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      try {
+        await deleteOrder(id); // Call the deleteOrder function from the API
+        setOrders(orders.filter((order) => order.id !== id)); // Update the state to remove the deleted order
+      } catch (error) {
+        console.error("Failed to delete order:", error);
+      }
+    }
   };
   const handlePostNew = () => {
     navigate("/admin/create/order");
@@ -50,10 +58,10 @@ const AdminOrders = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => (
-            <tr key={index}>
+          {orders.map((order) => (
+            <tr key={order.id}>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                {index + 1}
+                {order.id}
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 {order.userId}
@@ -75,7 +83,7 @@ const AdminOrders = () => {
                     cursor: "pointer",
                     marginRight: "5px",
                   }}
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(order.id)}
                 >
                   Delete
                 </button>
@@ -88,7 +96,7 @@ const AdminOrders = () => {
                     borderRadius: "4px",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleUpdate(index)}
+                  onClick={() => handleUpdate(order.id)}
                 >
                   Update
                 </button>

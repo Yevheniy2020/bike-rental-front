@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addOrder } from "../../../api/orderApi.ts"; // Adjust the import path as necessary
 
 const AdminCreateOrder = () => {
   const navigate = useNavigate();
+  const [orderData, setOrderData] = useState({
+    userId: 0,
+    bikeId: 0,
+    toPay: 0,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setOrderData({ ...orderData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addOrder(orderData);
+      navigate("/admin/orders");
+    } catch (error) {
+      console.error("Failed to create order:", error);
+    }
+  };
 
   return (
     <div
@@ -16,7 +37,7 @@ const AdminCreateOrder = () => {
       }}
     >
       <h1 style={{ textAlign: "center", color: "#333" }}>Create a New Order</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="userId"
@@ -28,6 +49,8 @@ const AdminCreateOrder = () => {
             type="number"
             id="userId"
             name="userId"
+            value={orderData.userId}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -48,6 +71,8 @@ const AdminCreateOrder = () => {
             type="number"
             id="bikeId"
             name="bikeId"
+            value={orderData.bikeId}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width
@@ -68,6 +93,8 @@ const AdminCreateOrder = () => {
             type="number"
             id="toPay"
             name="toPay"
+            value={orderData.toPay}
+            onChange={handleChange}
             required
             style={{
               width: "calc(100% - 20px)", // Adjusted width

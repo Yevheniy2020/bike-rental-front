@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllModels } from "../../api/modelApi.ts"; // Adjust the import path as necessary
+import { getAllModels, deleteModel } from "../../api/modelApi.ts"; // Adjust the import path as necessary
 import { CreateBikeModelDTO } from "../../api/types/types.ts"; // Adjust the import path as necessary
 
 const AdminModels = () => {
   const navigate = useNavigate();
   const [models, setModels] = useState<CreateBikeModelDTO[]>([]);
 
-  const handleUpdate = (index) => {
-    console.log("Update model with index:", index);
+  const handleUpdate = (id) => {
+    navigate(`/admin/update/model/${id}`);
   };
-  const handleDelete = (index) => {
-    console.log("Delete model with index:", index);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this model?")) {
+      try {
+        await deleteModel(id); // Call the deleteModel function from the API
+        setModels(models.filter((model) => model.id !== id)); // Update the state to remove the deleted model
+      } catch (error) {
+        console.error("Failed to delete model:", error);
+      }
+    }
   };
   const handlePostNew = () => {
     navigate("/admin/create/model");
@@ -47,10 +55,10 @@ const AdminModels = () => {
           </tr>
         </thead>
         <tbody>
-          {models.map((model, index) => (
-            <tr key={index}>
+          {models.map((model) => (
+            <tr key={model.id}>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                {index + 1}
+                {model.id}
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 {model.name}
@@ -69,7 +77,7 @@ const AdminModels = () => {
                     cursor: "pointer",
                     marginRight: "5px",
                   }}
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(model.id)}
                 >
                   Delete
                 </button>
@@ -82,7 +90,7 @@ const AdminModels = () => {
                     borderRadius: "4px",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleUpdate(index)}
+                  onClick={() => handleUpdate(model.id)}
                 >
                   Update
                 </button>
