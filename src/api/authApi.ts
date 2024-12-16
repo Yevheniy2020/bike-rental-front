@@ -6,9 +6,12 @@ import {
   ApiResponse,
 } from "./types/types";
 
+import setAuthHeader from "./get-token.ts";
+
 export const register = async (
   data: CreateUserDTO
 ): Promise<ApiResponse<UserDTO>> => {
+  setAuthHeader();
   const response = await api.post<ApiResponse<UserDTO>>(
     "/api/Authentification/register",
     data
@@ -19,6 +22,7 @@ export const register = async (
 export const login = async (
   data: LoginUserDTO
 ): Promise<ApiResponse<UserDTO>> => {
+  setAuthHeader();
   const response = await api.post<ApiResponse<UserDTO>>(
     "/api/Authentification/login",
     data

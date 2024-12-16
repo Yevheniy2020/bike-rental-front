@@ -28,6 +28,8 @@ const AdminBikes = () => {
   const fetchBikes = async () => {
     try {
       const response: any = await getAllBikes();
+      console.log(response);
+
       setBikes(response);
     } catch (error) {
       console.error("Failed to fetch bikes:", error);
@@ -58,6 +60,7 @@ const AdminBikes = () => {
             <th style={{ border: "1px solid #ccc", padding: "8px" }}>
               Renting Center ID
             </th>
+            <th style={{ border: "1px solid #ccc", padding: "8px" }}>State</th>
             <th style={{ border: "1px solid #ccc", padding: "8px" }}>
               Actions
             </th>
@@ -87,6 +90,9 @@ const AdminBikes = () => {
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 {bike.rentingCenterId}
+              </td>
+              <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                {bike.state} {/* Added bike.state */}
               </td>
               <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                 <button

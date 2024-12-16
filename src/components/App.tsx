@@ -4,13 +4,10 @@ import Bikes from "./Bikes.tsx";
 
 const App = () => {
   const navigate = useNavigate();
-  const isAuthenticated = checkAuth(); // Check authentication based on local storage
-
+  const isAuthenticated = localStorage.getItem("user") !== "null";
   useEffect(() => {
-    console.log(localStorage.getItem("user") !== "null");
-
     if (!isAuthenticated) {
-      navigate("/login"); // Redirect to login if not authenticated
+      navigate("/login");
     }
   }, [isAuthenticated, navigate]);
 
@@ -19,10 +16,6 @@ const App = () => {
       {isAuthenticated ? <Bikes /> : null}
     </div>
   );
-};
-
-const checkAuth = () => {
-  return localStorage.getItem("user") !== "null";
 };
 
 export default App;

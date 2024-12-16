@@ -44,7 +44,7 @@ const AdminOrders = () => {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th style={{ border: "1px solid #ccc", padding: "8px" }}>Index</th>
+            <th style={{ border: "1px solid #ccc", padding: "8px" }}>ID</th>
             <th style={{ border: "1px solid #ccc", padding: "8px" }}>
               User ID
             </th>

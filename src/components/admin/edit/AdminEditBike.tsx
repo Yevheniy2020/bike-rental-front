@@ -36,7 +36,12 @@ const AdminEditBike = () => {
     if (bikeData) {
       try {
         const bikeId = id ? parseInt(id) : 0;
-        await updateBike(bikeId, bikeData); // Updated to updateBike
+        // Parse bikeData.state to int before updating
+        const updatedBikeData = {
+          ...bikeData,
+          state: parseInt(bikeData.state as any),
+        };
+        await updateBike(bikeId, updatedBikeData); // Updated to updateBike
         navigate("/admin/bikes");
       } catch (error) {
         console.error("Failed to edit bike:", error);
@@ -157,6 +162,28 @@ const AdminEditBike = () => {
             id="rentingCenterId"
             name="rentingCenterId"
             value={bikeData?.rentingCenterId || 0} // Set default value
+            onChange={handleChange}
+            required
+            style={{
+              width: "calc(100% - 20px)",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label
+            htmlFor="state"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            State:
+          </label>
+          <input
+            type="text"
+            id="state"
+            name="state"
+            value={bikeData?.state || 0} // Set default value
             onChange={handleChange}
             required
             style={{

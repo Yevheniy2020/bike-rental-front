@@ -25,6 +25,7 @@ import AdminCreateOrder from "./components/admin/create/AdminCreateOrder.tsx";
 // -
 import Login from "./components/auth/Login.tsx";
 import Register from "./components/auth/Register.tsx";
+import Profile from "./components/Profile.tsx";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -36,6 +37,7 @@ if (rootElement) {
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
           {/* - */}
           <Route path="/bike-view/:id" element={<Bike />} />
           <Route path="/admin" element={<Admin />} />

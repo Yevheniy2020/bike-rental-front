@@ -12,7 +12,8 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data: CreateUserDTO = { username, email, password }; // Included email in data
+    const role = 1;
+    const data: CreateUserDTO = { username, email, password, role }; // Included email in data
 
     try {
       await register(data);

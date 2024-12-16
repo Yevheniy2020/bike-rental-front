@@ -1,6 +1,7 @@
 // User Types
 export interface CreateUserDTO {
   username: string;
+  role?: number;
   email: string;
   password: string;
 }
@@ -21,9 +22,30 @@ export interface CreateBikeDTO {
   id?: number;
   description?: string;
   photoUrl?: string;
+  state?: number;
   pricePerHour: number;
   bikeModelId: number;
   rentingCenterId: number;
+}
+
+export interface CreateBikeByBikeIdDTO {
+  id: number;
+  bikeModelId: number;
+  description: string;
+  photoUrl: string;
+  pricePerHour: number;
+  rentingCenterId: number;
+  state: number;
+  bikeModel: {
+    id: number;
+    brandId: number;
+    name: string;
+    brand: {
+      id: number;
+      name: string;
+      description: string;
+    };
+  };
 }
 
 // Bike Model Types

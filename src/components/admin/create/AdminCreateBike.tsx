@@ -10,11 +10,15 @@ const AdminCreateBike = () => {
     pricePerHour: 0,
     bikeModelId: 0,
     rentingCenterId: 0,
+    state: 0, // Changed state to number
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setBikeData({ ...bikeData, [name]: value });
+    setBikeData({
+      ...bikeData,
+      [name]: name === "state" ? Number(value) : value,
+    }); // Convert state to number
   };
 
   const handleSubmit = async (e) => {
@@ -140,6 +144,28 @@ const AdminCreateBike = () => {
             id="rentingCenterId"
             name="rentingCenterId"
             value={bikeData.rentingCenterId}
+            onChange={handleChange}
+            required
+            style={{
+              width: "calc(100% - 20px)", // Adjusted width
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label
+            htmlFor="state"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            State:
+          </label>
+          <input
+            type="number" // Changed input type to number
+            id="state"
+            name="state"
+            value={bikeData.state}
             onChange={handleChange}
             required
             style={{

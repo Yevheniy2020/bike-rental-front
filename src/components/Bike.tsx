@@ -1,64 +1,39 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getBikeById } from "../api/bikeApi.ts";
-import { getBrandById } from "../api/brandApi.ts";
 import { getCenterById } from "../api/centerApi.ts";
-import { getModelById } from "../api/modelApi.ts";
+import { addOrder } from "../api/orderApi.ts";
+
 import {
-  CreateBikeDTO,
-  CreateBikeModelDTO,
-  CreateBrandDTO,
+  CreateBikeByBikeIdDTO,
   CreateRentingCenterDTO,
+  CreateOrderDTO,
 } from "../api/types/types.ts";
 
-const YUMMY_DATA_BRAND = {
-  name: "Yummy Brand 1",
-  description: "This is a delicious brand for all your biking needs.",
-};
-const YUMMY_DATA_RENTING_CENTER = {
-  latitude: 34.0522,
-  longitude: -118.2437,
-  description: "Yummy Renting Center 1 - The best place to rent bikes!",
-};
-const YUMMY_DATA_MODEL = {
-  name: "Yummy Model 1",
-  brandId: 1,
-};
 const Bike = () => {
   const { id } = useParams();
-  const [bike, setBike] = React.useState<CreateBikeDTO | null>(null);
-  const [brand, setBrand] = React.useState<CreateBrandDTO | null>(null);
+  const [bike, setBike] = React.useState<CreateBikeByBikeIdDTO | null>(null);
   const [rentingCenter, setRentingCenter] =
     React.useState<CreateRentingCenterDTO | null>(null);
-  const [model, setModel] = React.useState<CreateBikeModelDTO | null>(null);
 
   const fetchBike = async (bikeId) => {
     const bikeResponse: any = await getBikeById(bikeId);
     setBike(bikeResponse);
-    return bikeResponse;
-  };
+    console.log(bikeResponse); // Fixed log to show the fetched bike response
 
-  const fetchBrand = async (bikeModelId) => {
-    const brandResponse: any = await getBrandById(bikeModelId);
-    setBrand(brandResponse);
+    return bikeResponse;
   };
 
   const fetchRentingCenter = async (rentingCenterId) => {
     const centerResponse: any = await getCenterById(rentingCenterId);
     setRentingCenter(centerResponse);
-  };
-
-  const fetchModel = async (bikeModelId) => {
-    const modelResponse: any = await getModelById(bikeModelId);
-    setModel(modelResponse);
+    console.log(centerResponse); // Fixed log to show the fetched renting center response
   };
 
   const fetchBikeData = async () => {
     try {
       const bikeResponse = await fetchBike(id);
-      await fetchBrand(bikeResponse.bikeModelId);
       await fetchRentingCenter(bikeResponse.rentingCenterId);
-      await fetchModel(bikeResponse.bikeModelId); // Fixed to use bikeModelId instead of rentingCenterId
     } catch (error) {
       console.error("Failed to fetch bike data:", error);
     }
@@ -66,11 +41,31 @@ const Bike = () => {
 
   useEffect(() => {
     fetchBikeData();
-    console.log(bike);
-    console.log(brand);
-    console.log(rentingCenter);
-    console.log(model);
   }, [id]);
+
+  const handlerOnClickOrderNow = async () => {
+    if (!bike) return; // Ensure bike data is available
+    const userData = localStorage.getItem("userData");
+    const parsedData = userData ? JSON.parse(userData) : null;
+
+    if (!parsedData) {
+      alert("User data not found. Please log in.");
+      return;
+    }
+
+    const orderData: CreateOrderDTO = {
+      userId: parsedData.id, // Replace with actual user ID from context or state
+      bikeId: bike.id,
+      toPay: bike.pricePerHour, // Assuming pricePerHour is the amount to pay
+    };
+    try {
+      await addOrder(orderData);
+      alert("Order placed successfully!");
+    } catch (error) {
+      console.error("Failed to place order:", error);
+      alert("Failed to place order. Please try again.");
+    }
+  };
 
   return (
     <div
@@ -85,23 +80,38 @@ const Bike = () => {
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
-      <h2 style={{ color: "#4CAF50" }}>{YUMMY_DATA_MODEL.name}</h2>
+      {bike?.photoUrl && (
+        <img
+          src={bike.photoUrl}
+          alt={bike?.bikeModel?.name}
+          style={{
+            width: "100%",
+            height: "300px",
+            objectFit: "cover",
+            borderRadius: "10px",
+          }}
+        />
+      )}
+      <h2 style={{ color: "#4CAF50" }}>{bike?.bikeModel?.name}</h2>
+      <p>{bike?.description}</p>
       <h3 style={{ color: "#333" }}>Brand Information</h3>
       <p>
-        <strong>Name:</strong> {YUMMY_DATA_BRAND.name}
+        <strong>Name:</strong> {bike?.bikeModel?.brand?.name}
       </p>
       <p>
-        <strong>Description:</strong> {YUMMY_DATA_BRAND.description}
+        <strong>Description:</strong> {bike?.bikeModel?.brand?.description}
       </p>
       <h3 style={{ color: "#333" }}>Renting Center Location</h3>
+      <div style={{ width: "100%", height: "300px" }}>
+        <iframe
+          title="Renting Center Location"
+          src={`https://www.google.com/maps/embed/v1/view?key=AIzaSyAFsQWz4yW6KYla1oKHFOcajtmaorkA6F4&center=${rentingCenter?.latitude},${rentingCenter?.longitude}&zoom=15`}
+          style={{ width: "100%", height: "100%", border: "0" }}
+          allowFullScreen
+        ></iframe>
+      </div>
       <p>
-        <strong>Latitude:</strong> {YUMMY_DATA_RENTING_CENTER.latitude}
-      </p>
-      <p>
-        <strong>Longitude:</strong> {YUMMY_DATA_RENTING_CENTER.longitude}
-      </p>
-      <p>
-        <strong>Description:</strong> {YUMMY_DATA_RENTING_CENTER.description}
+        <strong>Price per Hour:</strong> ${bike?.pricePerHour?.toFixed(2)}
       </p>
 
       <div
@@ -125,7 +135,7 @@ const Bike = () => {
             margin: "10px 0", // Add margin for spacing between buttons
             transition: "background-color 0.3s, transform 0.2s", // Transition for hover effect
           }}
-          onClick={() => alert("Order placed for " + YUMMY_DATA_MODEL.name)}
+          onClick={handlerOnClickOrderNow}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = "#45a049"; // Darker green on hover
             e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge on hover

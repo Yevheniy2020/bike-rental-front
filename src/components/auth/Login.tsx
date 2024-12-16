@@ -16,8 +16,7 @@ const Login = () => {
     try {
       const response = await login(data);
 
-      console.log(response);
-
+      localStorage.setItem("userData", JSON.stringify(response)); // Set user data in local storage
       localStorage.setItem("user", response.accessToken); // Set user data in local storage
       navigate("/"); // Redirect to dashboard or another page after successful login
     } catch (err) {

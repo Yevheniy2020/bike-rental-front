@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllBikes } from "../api/bikeApi.ts";
 import { CreateBikeDTO } from "../api/types/types.ts";
@@ -7,14 +7,26 @@ const Bikes = () => {
   const [bikes, setBikes] = useState<CreateBikeDTO[]>([]);
   const [modelFilter, setModelFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
+  const [loading, setLoading] = useState(true); // State to manage loading
+  const [parsedUserData, setParsedUserData] = useState<any | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      setParsedUserData(JSON.parse(userData));
+    }
+  }, []);
 
   const fetchBikes = async () => {
+    setLoading(true); // Set loading to true before fetching
     try {
       const response: any = await getAllBikes();
       console.log(response);
       setBikes(response);
     } catch (error) {
       console.error("Failed to fetch bikes:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
     }
   };
 
@@ -40,6 +52,74 @@ const Bikes = () => {
       (brandFilter === "" || brandName.includes(brandFilter.toLowerCase()))
     );
   });
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <svg
+          style={{ width: "150px" }}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 200 200"
+        >
+          <radialGradient
+            id="a5"
+            cx=".66"
+            fx=".66"
+            cy=".3125"
+            fy=".3125"
+            gradientTransform="scale(1.5)"
+          >
+            <stop offset="0" stop-color="#001FFF"></stop>
+            <stop offset=".3" stop-color="#001FFF" stop-opacity=".9"></stop>
+            <stop offset=".6" stop-color="#001FFF" stop-opacity=".6"></stop>
+            <stop offset=".8" stop-color="#001FFF" stop-opacity=".3"></stop>
+            <stop offset="1" stop-color="#001FFF" stop-opacity="0"></stop>
+          </radialGradient>
+          <circle
+            transform-origin="center"
+            fill="none"
+            stroke="url(#a5)"
+            stroke-width="15"
+            stroke-linecap="round"
+            stroke-dasharray="200 1000"
+            stroke-dashoffset="0"
+            cx="100"
+            cy="100"
+            r="70"
+          >
+            <animateTransform
+              type="rotate"
+              attributeName="transform"
+              calcMode="spline"
+              dur="2"
+              values="360;0"
+              keyTimes="0;1"
+              keySplines="0 0 1 1"
+              repeatCount="indefinite"
+            ></animateTransform>
+          </circle>
+          <circle
+            transform-origin="center"
+            fill="none"
+            opacity=".2"
+            stroke="#001FFF"
+            stroke-width="15"
+            stroke-linecap="round"
+            cx="100"
+            cy="100"
+            r="70"
+          ></circle>
+        </svg>
+      </div>
+    ); // Display loading message
+  }
 
   return (
     <div>
@@ -107,10 +187,35 @@ const Bikes = () => {
             )
           )}
         </select>
+        {!parsedUserData.role && (
+          <button
+            style={{
+              padding: "15px 30px",
+              backgroundColor: "#2196F3",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "16px",
+              transition: "background-color 0.3s, transform 0.2s",
+            }}
+            onClick={() => navigate("/admin")}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#1976D2"; // Darker blue on hover
+              e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#2196F3"; // Original blue
+              e.currentTarget.style.transform = "scale(1)"; // Reset size
+            }}
+          >
+            To Admin
+          </button>
+        )}
         <button
           style={{
             padding: "15px 30px",
-            backgroundColor: "#2196F3",
+            backgroundColor: "#2196F3", // Changed background color to blue
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -118,7 +223,9 @@ const Bikes = () => {
             fontSize: "16px",
             transition: "background-color 0.3s, transform 0.2s",
           }}
-          onClick={() => navigate("/admin")}
+          onClick={() => {
+            window.location.href = "/profile"; // Navigate to profile page
+          }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = "#1976D2"; // Darker blue on hover
             e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge on hover
@@ -128,34 +235,7 @@ const Bikes = () => {
             e.currentTarget.style.transform = "scale(1)"; // Reset size
           }}
         >
-          To Admin
-        </button>
-        <button
-          style={{
-            padding: "15px 30px",
-            backgroundColor: "#F44336",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-            transition: "background-color 0.3s, transform 0.2s",
-          }}
-          onClick={() => {
-            // Add your logout logic here
-            localStorage.setItem("user", "null"); // Set user data in local storage
-            window.location.reload(); // Reload the current page
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#D32F2F"; // Darker red on hover
-            e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge on hover
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#F44336"; // Original red
-            e.currentTarget.style.transform = "scale(1)"; // Reset size
-          }}
-        >
-          Log Out
+          Go to Profile
         </button>
       </div>
       <div
@@ -197,6 +277,18 @@ const Bikes = () => {
             />
             <h3>{bike.description}</h3>
             <p>Price per hour: ${bike.pricePerHour}</p>
+            <p>
+              Status:{" "}
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: bike.state === 0 ? "green" : "red",
+                }}
+              >
+                {bike.state === 0 ? "Available" : "Rented"}
+              </span>
+            </p>
+            {/* Added status check */}
           </div>
         ))}
       </div>
