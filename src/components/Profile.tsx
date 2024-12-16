@@ -66,7 +66,7 @@ const Profile = () => {
         <strong>Name:</strong> {parsedData?.username || "Not Found"}
       </p>
       <p>
-        <strong>Role:</strong> {parsedData?.role === 0 ? "User" : "Admin"}
+        <strong>Role:</strong> {parsedData?.role === 1 ? "User" : "Admin"}
       </p>
       <h3>My Orders</h3>
       <ul>
