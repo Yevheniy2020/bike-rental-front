@@ -4,7 +4,9 @@ import Bikes from "./Bikes.tsx";
 
 const App = () => {
   const navigate = useNavigate();
-  const isAuthenticated = localStorage.getItem("user") !== "null";
+  const isAuthenticated =
+    localStorage.getItem("user") !== null &&
+    localStorage.getItem("user") !== "null";
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
